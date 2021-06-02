@@ -1,6 +1,18 @@
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import spotipy.util as util
+import pathlib
+
+
+def resolve_relative_path(file: str, path: str, parent_levels=0) -> pathlib.Path:
+    """
+    returns absolute path to a file given its relative :param path from :param file
+    :param file: path from root to a file
+    :param path: relative path to file2 from the last common point in the two paths
+    :param parent_levels: number of levels in the path to go up to get to the last common point
+    :return: path from root to file2
+    """
+    return pathlib.Path(file).parents[parent_levels].joinpath(path)
 
 
 class SpotifyConnector:
@@ -17,7 +29,7 @@ class SpotifyConnector:
         self.scope = "user-library-read playlist-read-private streaming user-modify-playback-state user-read-playback-state playlist-modify-private"
         self.token = util.prompt_for_user_token(
             self.username,
-            scope,
+            self.scope,
             client_id=self.cid,
             client_secret=self.secret,
             redirect_uri="http://localhost/",
@@ -47,7 +59,7 @@ class SpotifyConnector:
 
     def get_album_ids_from_name(self, name: str, id_type: str) -> list:
         """takes composer fname + lname and returns up to 20 of their artist albums"""
-        artist = get_artist_id_from_name(name=name, id_type="id")
+        artist = self.get_artist_id_from_name(name=name, id_type="id")
         albums = self.sp.artist_albums(artist, limit=20)
         return [albums["items"][i]["id"] for i in range(len(albums["items"]))]
 
@@ -71,6 +83,12 @@ class SpotifyConnector:
             except:
                 continue
         return features_list
+
+    # TODO: does time matter? or just timbre?
+    def get_track_timbres(self, track_id: str):
+        analysis = self.sp.audio_analysis(track_id)
+        timbres = [segment["timbre"] for segment in analysis["segments"]]
+        return timbres
 
     def get_track_name_from_id(self, track_id: str):
         return self.sp.track(track_id)["name"]
