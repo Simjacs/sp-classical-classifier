@@ -4,7 +4,7 @@ import spotipy.util as util
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from utils import SpotifyConnector, resolve_relative_path
+from src.utils import SpotifyConnector, resolve_relative_path
 
 pd.set_option("display.max_columns", None)
 
@@ -51,6 +51,8 @@ for j in range(len(track_ids)):
 
 timbres_df = pd.DataFrame(columns=["track_id", "timbres"],
                           data=timbre_rows_list)
-timbres_path = resolve_relative_path(__file__, "data/timbres.json", parent_levels=1)
-timbres_df.to_json(timbres_path)
+timbres_path = resolve_relative_path(__file__, "data/timbres.csv", parent_levels=1)
+timbres_pickle_path = resolve_relative_path(__file__, "data/timbres.pkl", parent_levels=1)
+timbres_df.to_csv(timbres_path, index=False)
+timbres_df.to_pickle(timbres_pickle_path)
 print(timbres_df.dtypes)
