@@ -15,7 +15,16 @@ composers_path = resolve_relative_path(
 composers = pd.read_csv(composers_path)
 print(composers.head())
 
-features = ['danceability', 'energy', 'key', 'loudness', 'mode', 'valence', 'tempo', 'time_signature']
+features = [
+    "danceability",
+    "energy",
+    "key",
+    "loudness",
+    "mode",
+    "valence",
+    "tempo",
+    "time_signature",
+]
 rows_list = []
 timbre_rows_list = []
 composer = 24
@@ -45,7 +54,9 @@ for i in range(composer, len(composers)):
 
     for j in range(len(track_ids)):
         if j % 100 == 0:
-            print(f"track {j} out of {len(track_ids)}, composer {i} out of {len(composers)}")
+            print(
+                f"track {j} out of {len(track_ids)}, composer {i} out of {len(composers)}"
+            )
             print(str(datetime.datetime.now().time()))
         try:
             timbres = connector.get_track_timbres(track_ids[j])
@@ -53,10 +64,13 @@ for i in range(composer, len(composers)):
         except SpotifyException:
             pass
 
-    timbres_df = pd.DataFrame(columns=["track_id", "track_name", "era", "timbres"],
-                              data=timbre_rows_list)
+    timbres_df = pd.DataFrame(
+        columns=["track_id", "track_name", "era", "timbres"], data=timbre_rows_list
+    )
 
-    timbres_path = resolve_relative_path(__file__, f"data/timbres_{composer}.pkl", parent_levels=1)
+    timbres_path = resolve_relative_path(
+        __file__, f"data/timbres_{composer}.pkl", parent_levels=1
+    )
     timbres_df.to_pickle(timbres_path)
 
     composer += 1
