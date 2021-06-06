@@ -4,7 +4,7 @@ import spotipy.util as util
 import pathlib
 
 
-def resolve_relative_path(file: str, path: str, parent_levels=0) -> pathlib.Path:
+def resolve_relative_path(file: str, path: str, parent_levels=0) -> str:
     """
     returns absolute path to a file given its relative :param path from :param file
     :param file: path from root to a file
@@ -12,7 +12,7 @@ def resolve_relative_path(file: str, path: str, parent_levels=0) -> pathlib.Path
     :param parent_levels: number of levels in the path to go up to get to the last common point
     :return: path from root to file2
     """
-    return pathlib.Path(file).parents[parent_levels].joinpath(path)
+    return str(pathlib.Path(file).parents[parent_levels].joinpath(path))
 
 
 class SpotifyConnector:
