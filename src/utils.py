@@ -2,7 +2,7 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import spotipy.util as util
 import pathlib
-
+import pandas as pd
 
 def resolve_relative_path(file: str, path: str, parent_levels=0) -> str:
     """
@@ -92,3 +92,18 @@ class SpotifyConnector:
 
     def get_track_name_from_id(self, track_id: str):
         return self.sp.track(track_id)["name"]
+
+
+def recombine_data(data_path: str, file_name_format="timbres_*.pkl") -> pd.DataFrame:
+    for number, path in enumerate(pathlib.Path(data_path).rglob(file_name_format)):
+        print(f"Reading pickle {number}")
+        if number == 0:
+            df = pd.read_pickle(path)
+        else:
+            df_to_concat = pd.read_pickle(path)
+            df = pd.concat([df, df_to_concat])
+    return df
+
+
+
+
