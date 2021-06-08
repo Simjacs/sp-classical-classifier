@@ -3,6 +3,10 @@ from spotipy.oauth2 import SpotifyClientCredentials
 import spotipy.util as util
 import pathlib
 import pandas as pd
+from math import floor
+import random
+import numpy as np
+
 
 def resolve_relative_path(file: str, path: str, parent_levels=0) -> str:
     """
@@ -109,5 +113,50 @@ def read_combined_data(data_path: str, already_combined=False, file_name_format=
     return df
 
 
+def split_list(list_to_split, split_size):
+    new_list = [list_to_split[i: i + split_size] for i in range(0, len(list_to_split), split_size)]
+    return new_list
+
+
+def standardise_timbre_length(timbre: list, cut_off_length: int) -> list:
+    timbre_len = len(timbre)
+    if timbre_len > cut_off_length:
+        multiples = floor(timbre_len/cut_off_length)
+        print(multiples)
+        remainder = int(timbre_len % cut_off_length)
+        print(remainder)
+        if remainder != 0:
+            exactly_divisible_list = timbre[:-remainder]
+            print(exactly_divisible_list)
+            last_average = np.mean(timbre[-(remainder + 1):], axis=0)
+            print(last_average)
+        else:
+            exactly_divisible_list = timbre
+            last_average = []
+        split_timbres = split_list(exactly_divisible_list, multiples)
+        print(split_timbres)
+        averaged_timbres = [np.mean(timbres, axis=0).tolist() for timbres in split_timbres]
+        print(averaged_timbres)
+        timbres = averaged_timbres
+        if remainder != 0:
+            timbres[-1] = last_average.tolist()
+        print(timbres)
+        return timbres
+    elif timbre_len < cut_off_length:
+        multiple = floor(cut_off_length/timbre_len)
+        print(multiple)
+        remainder = int(cut_off_length % timbre_len)
+        print(remainder)
+        random_extra_multiples = random.sample(range(timbre_len), remainder)
+        print(random_extra_multiples)
+        lengthened_timbres = []
+        for i in range(timbre_len):
+            lengthened_timbres.append(timbre[i])
+            if i in random_extra_multiples:
+                lengthened_timbres.append(timbre[i])
+        timbres = timbre * (multiple - 1) + lengthened_timbres
+        return timbres
+    elif timbre_len == cut_off_length:
+        return timbre
 
 

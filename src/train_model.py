@@ -1,12 +1,15 @@
+import random
+
 import pandas as pd
 import numpy as np
 from math import floor
 # from keras.layers import Dense, Conv1D, Flatten, MaxPooling1D
 # from keras.models import Sequential
-from src.utils import resolve_relative_path, read_combined_data
+from src.utils import resolve_relative_path, read_combined_data, standardise_timbre_length
 
 pd.set_option("display.max_columns", None)
 
+data_length = 300
 # read data:
 data_path = resolve_relative_path(__file__, "data", parent_levels=1)
 combined_data_path = resolve_relative_path(__file__, "data/combined_timbres.pkl", parent_levels=1)
@@ -16,36 +19,11 @@ combined_data_path = resolve_relative_path(__file__, "data/combined_timbres.pkl"
 df = pd.read_pickle(resolve_relative_path(__file__, "data/timbres_0.pkl", parent_levels=1))
 #timbre_lengths = [len(row[i]["timbre"]) for row in ]
 
-X = (df["timbres"])
+df["standard_len_timbres"] = df["timbres"].apply(lambda x: standardise_timbre_length(x, data_length))
+X = (df["standard_len_timbres"])
 timbre_lens = [len(timbre) for timbre in X]
 
-
-def split_list(list_to_split, split_size):
-    new_list = [list_to_split[i: i + split_size] for i in range(0, len(list_to_split), split_size)]
-    return new_list
-
-
-cut_off_quantile = 0.9
-cut_off_len = np.quantile(timbre_lens, cut_off_quantile)
-test_timbre = X[22]
-test_timbre_len = len(test_timbre)
-print(cut_off_len, test_timbre_len)
-if test_timbre_len > cut_off_len:
-    multiples = floor(test_timbre_len/cut_off_len)
-    remainder = int(test_timbre_len % cut_off_len)
-    exactly_divisible_list = test_timbre[:-remainder]
-    last_average = np.mean(test_timbre[-remainder:], axis=0)
-    split_timbres = split_list(exactly_divisible_list, multiples)
-    averaged_timbres = [np.mean(timbres, axis=0) for timbres in split_timbres]
-    timbres = averaged_timbres + last_average
-elif test_timbre_len < cut_off_len:
-
-
-
-print(len(test_timbre))
-
-
-print(df.shape)
+print(pd.unique(timbre_lens))
 
 
 
