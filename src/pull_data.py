@@ -1,7 +1,7 @@
 import pandas as pd
 import datetime
 from spotipy.exceptions import SpotifyException
-from src.utils import SpotifyConnector, resolve_relative_path
+from src.utils import SpotifyConnector, resolve_relative_path, read_combined_data
 
 pd.set_option("display.max_columns", None)
 
@@ -74,3 +74,8 @@ for i in range(composer, len(composers)):
     timbres_df.to_pickle(timbres_path)
 
     composer += 1
+
+df = read_combined_data(resolve_relative_path(__file__, "data", parent_levels=1))
+df.to_pickle(resolve_relative_path(__file__, "data/combined_timbres.pkl", parent_levels=1))
+
+

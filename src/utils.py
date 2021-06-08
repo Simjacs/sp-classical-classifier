@@ -94,14 +94,18 @@ class SpotifyConnector:
         return self.sp.track(track_id)["name"]
 
 
-def recombine_data(data_path: str, file_name_format="timbres_*.pkl") -> pd.DataFrame:
-    for number, path in enumerate(pathlib.Path(data_path).rglob(file_name_format)):
-        print(f"Reading pickle {number}")
-        if number == 0:
-            df = pd.read_pickle(path)
-        else:
-            df_to_concat = pd.read_pickle(path)
-            df = pd.concat([df, df_to_concat])
+def read_combined_data(data_path: str, already_combined=False, file_name_format="timbres_*.pkl") -> pd.DataFrame:
+    if not already_combined:
+        for number, path in enumerate(pathlib.Path(data_path).rglob(file_name_format)):
+            print(path)
+            print(f"Reading pickle {number}")
+            if number == 0:
+                df = pd.read_pickle(path)
+            else:
+                df_to_concat = pd.read_pickle(path)
+                df = pd.concat([df, df_to_concat])
+    else:
+        df = pd.read_pickle(data_path)
     return df
 
 
