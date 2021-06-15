@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  timbre-model:
+    image: timbre-model
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    volumes:
+      - './data'
