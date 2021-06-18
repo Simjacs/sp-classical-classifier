@@ -8,17 +8,6 @@ import random
 import numpy as np
 
 
-def resolve_relative_path(file: str, path: str, parent_levels=0) -> str:
-    """
-    returns absolute path to a file given its relative :param path from :param file
-    :param file: path from root to a file
-    :param path: relative path to file2 from the last common point in the two paths
-    :param parent_levels: number of levels in the path to go up to get to the last common point
-    :return: path from root to file2
-    """
-    return str(pathlib.Path(file).parents[parent_levels].joinpath(path))
-
-
 class SpotifyConnector:
     def __init__(self):
         self.cid = "2bd837c837174d50ab873c61acf24f68"
@@ -98,57 +87,86 @@ class SpotifyConnector:
         return self.sp.track(track_id)["name"]
 
 
-def read_combined_data(data_path: str, already_combined=False, file_name_format="timbres_*.pkl") -> pd.DataFrame:
-    if not already_combined:
-        for number, path in enumerate(pathlib.Path(data_path).rglob(file_name_format)):
-            print(path)
-            print(f"Reading pickle {number}")
-            if number == 0:
-                df = pd.read_pickle(path)
-            else:
-                df_to_concat = pd.read_pickle(path)
-                df = pd.concat([df, df_to_concat])
-    else:
-        df = pd.read_pickle(data_path)
-    return df
+class Utils:
 
+    @staticmethod
+    def resolve_relative_path(file: str, path: str, parent_levels=0) -> str:
+        """
+        returns absolute path to a file given its relative :param path from :param file
+        :param file: path from root to a file
+        :param path: relative path to file2 from the last common point in the two paths
+        :param parent_levels: number of levels in the path to go up to get to the last common point
+        :return: path from root to file2
+        """
+        return str(pathlib.Path(file).parents[parent_levels].joinpath(path))
 
-def split_list(list_to_split, split_size):
-    new_list = [list_to_split[i: i + split_size] for i in range(0, len(list_to_split), split_size)]
-    return new_list
+    @staticmethod
+    def split_list(list_to_split, split_size):
+        new_list = [list_to_split[i: i + split_size] for i in range(0, len(list_to_split), split_size)]
+        return new_list
+
+    @staticmethod
+    def reformat_array(array):
+        return np.rollaxis(np.dstack([item for item in array]), axis=-1)
+
+    @staticmethod
+    def create_sample_data(data_path: str, file_name_list=None):
+        if file_name_list is None:
+            file_name_list = ["timbres_0.pkl", "timbres_11.pkl", "timbres_24.pkl"]
+        path_list = [pathlib.Path(data_path).joinpath(file_name) for file_name in file_name_list]
+        df = pd.read_pickle(path_list[0])
+        for path in path_list:
+            df_to_concat = pd.read_pickle(path)
+            df = pd.concat([df, df_to_concat])
+        return df
+
+    @staticmethod
+    def read_combined_data(data_path: str, already_combined=False, file_name_format="timbres_*.pkl") -> pd.DataFrame:
+        if not already_combined:
+            for number, path in enumerate(pathlib.Path(data_path).rglob(file_name_format)):
+                print(path)
+                print(f"Reading pickle {number}")
+                if number == 0:
+                    df = pd.read_pickle(path)
+                else:
+                    df_to_concat = pd.read_pickle(path)
+                    df = pd.concat([df, df_to_concat])
+        else:
+            df = pd.read_pickle(data_path)
+        return df
 
 
 def standardise_timbre_length(timbre: list, cut_off_length: int) -> list:
     timbre_len = len(timbre)
     if timbre_len > cut_off_length:
         multiples = floor(timbre_len/cut_off_length)
-        print(multiples)
+        #print(multiples)
         remainder = int(timbre_len % cut_off_length)
-        print(remainder)
+        #print(remainder)
         if remainder != 0:
             exactly_divisible_list = timbre[:-remainder]
-            print(exactly_divisible_list)
+        #    print(exactly_divisible_list)
             last_average = np.mean(timbre[-(remainder + 1):], axis=0)
-            print(last_average)
+        #    print(last_average)
         else:
             exactly_divisible_list = timbre
             last_average = []
-        split_timbres = split_list(exactly_divisible_list, multiples)
-        print(split_timbres)
+        split_timbres = Utils.split_list(exactly_divisible_list, multiples)
+        #print(split_timbres)
         averaged_timbres = [np.mean(timbres, axis=0).tolist() for timbres in split_timbres]
-        print(averaged_timbres)
+        #print(averaged_timbres)
         timbres = averaged_timbres
         if remainder != 0:
             timbres[-1] = last_average.tolist()
-        print(timbres)
+        #print(timbres)
         return timbres
     elif timbre_len < cut_off_length:
         multiple = floor(cut_off_length/timbre_len)
-        print(multiple)
+        #print(multiple)
         remainder = int(cut_off_length % timbre_len)
-        print(remainder)
+        #print(remainder)
         random_extra_multiples = random.sample(range(timbre_len), remainder)
-        print(random_extra_multiples)
+        #print(random_extra_multiples)
         lengthened_timbres = []
         for i in range(timbre_len):
             lengthened_timbres.append(timbre[i])
@@ -158,5 +176,3 @@ def standardise_timbre_length(timbre: list, cut_off_length: int) -> list:
         return timbres
     elif timbre_len == cut_off_length:
         return timbre
-
-

@@ -1,10 +1,12 @@
-from setuptools import find_packages, setup
+from setuptools import setup
 
 setup(
-    name='src',
-    packages=find_packages(),
+    name='sp-classical-classifier',
     version='0.1.0',
-    description='classifies classical pieces by era (baroque, classical, romantic)',
-    author='Simran Jackson',
+    packages=['src'],
+    url='',
     license='',
+    author='simran',
+    author_email='simran.l.jackson@gmail.com',
+    description='Classifies classical tracks into Baroque/Classical/Romantic'
 )
