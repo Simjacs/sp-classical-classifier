@@ -16,9 +16,13 @@ data_length = 300
 # read data:
 logging.info("Reading data")
 data_path = Utils.resolve_relative_path(__file__, "data", parent_levels=1)
-combined_data_path = Utils.resolve_relative_path(__file__, "data/timbres_1.pkl", parent_levels=1)
-#df = Utils.read_combined_data(combined_data_path, already_combined=True)
+combined_data_path = Utils.resolve_relative_path(__file__, "data/combined_timbres.pkl", parent_levels=1)
 df = Utils.create_sample_data(data_path)
+# df = Utils.read_combined_data(data_path, already_combined=False)
+# df.to_pickle(Utils.join_string_path(data_path, "combined_timbres.pkl"))
+# df = Utils.read_combined_data(combined_data_path, already_combined=True)
+print("data shape:", df.shape)
+# df = Utils.create_sample_data(data_path)
 
 # process data:
 df["standard_len_timbres"] = df["timbres"].apply(lambda x: standardise_timbre_length(x, data_length))
@@ -65,4 +69,4 @@ model.fit(X_train, y_train)
 predictions = model.predict(X_test)
 
 # evaluate model:
-model.evaluate(X_test, y_test)
+print("model evaluation:", model.evaluate(X_test, y_test))

@@ -101,6 +101,10 @@ class Utils:
         return str(pathlib.Path(file).parents[parent_levels].joinpath(path))
 
     @staticmethod
+    def join_string_path(start_path: str, joining_path: str) -> str:
+        return str(pathlib.Path(start_path).joinpath(joining_path))
+
+    @staticmethod
     def split_list(list_to_split, split_size):
         new_list = [list_to_split[i: i + split_size] for i in range(0, len(list_to_split), split_size)]
         return new_list
@@ -112,7 +116,7 @@ class Utils:
     @staticmethod
     def create_sample_data(data_path: str, file_name_list=None):
         if file_name_list is None:
-            file_name_list = ["timbres_0.pkl", "timbres_11.pkl", "timbres_24.pkl"]
+            file_name_list = ["timbres_0.pkl", "timbres_1.pkl", "timbres_11.pkl", "timbres_12.pkl", "timbres_23.pkl", "timbres_24.pkl"]
         path_list = [pathlib.Path(data_path).joinpath(file_name) for file_name in file_name_list]
         df = pd.read_pickle(path_list[0])
         for path in path_list:
