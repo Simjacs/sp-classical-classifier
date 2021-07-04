@@ -2,6 +2,7 @@ FROM tensorflow/tensorflow:latest-gpu
 
 COPY requirements.txt .
 
+# install python 3.8
 RUN apt-get install software-properties-common
 RUN add-apt-repository ppa:deadsnakes/ppa
 RUN apt-get update
