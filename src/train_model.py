@@ -5,8 +5,8 @@ import numpy as np
 from tensorflow import convert_to_tensor
 from math import floor
 from sklearn.model_selection import train_test_split
-from keras.layers import Dense, Conv1D, Flatten, MaxPooling1D
-from keras.models import Sequential
+from tensorflow.keras.layers import Dense, Conv1D, Flatten, MaxPooling1D
+from tensorflow.keras.models import Sequential
 from tensorflow.keras.utils import to_categorical
 from utils import Utils, standardise_timbre_length
 
