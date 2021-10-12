@@ -52,7 +52,7 @@ sudo make shell
 
 Then from the image's bash shell, to run the scripts:
 ```bash 
-python3.8 /usr/src/app/src/[script_name]
+python3.8 /usr/src/app/src/[script_name].py
 ```
 
 To exit the image's shell, run `exit`

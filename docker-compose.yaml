@@ -3,6 +3,15 @@ version: '3.8'
 services:
   timbre-model:
     image: timbre-model
+    command: python -c "import tensorflow as tf;tf.test.gpu_device_name()"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ gpu ]
+    runtime: nvidia
     build:
       context: .
       dockerfile: Dockerfile
