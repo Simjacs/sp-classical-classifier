@@ -56,7 +56,7 @@ docs/_build/
 # PyBuilder
 target/
 
-# DotEnv configuration
+# DotEnv configurations
 .env
 
 # Database
@@ -84,3 +84,12 @@ target/
 
 # Mypy cache
 .mypy_cache/
+
+# timbre data (too big for git)
+data/timbres*
+data/combined_timbres.pkl
+
+# virtual env
+venv
+
+
